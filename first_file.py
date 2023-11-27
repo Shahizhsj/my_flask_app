@@ -9,8 +9,6 @@ from tensorflow.keras.layers import Dense, Dropout, LSTM
 from tensorflow.keras.models import Sequential
 import datetime as dt
 from datetime import date
-
-import os
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier
 app = Flask(__name__)
