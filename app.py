@@ -9,6 +9,8 @@ from tensorflow.keras.layers import Dense, Dropout, LSTM
 from tensorflow.keras.models import Sequential
 import datetime as dt
 from datetime import date
+
+import os
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier
 app = Flask(__name__)
@@ -57,48 +59,48 @@ def load_data(ticker,START,TODAY):
     data.reset_index(inplace=True)
     return data
 def predict(index,symbol):
-    START = "2018-01-01"
+    START = "2019-01-01"
     TODAY = date.today().strftime("%Y-%m-%d")
     data = load_data(symbol,START,TODAY)
+    data = data.drop(['Date', 'Adj Close'], axis = 1)
     train = pd.DataFrame(data[0:int(len(data)*0.70)])
     test = pd.DataFrame(data[int(len(data)*0.70): int(len(data))])
     scaler = MinMaxScaler(feature_range=(0,1))
-    train_close = train.iloc[:, index:index+1].values
-    test_close = test.iloc[:, index:index+1].values
+    train_close = train.iloc[:, 1:2].values
+    test_close = test.iloc[:, 1:2].values
     data_training_array = scaler.fit_transform(train_close)
     x_train = []
     y_train = [] 
-    for i in range(10, data_training_array.shape[0]):
-        x_train.append(data_training_array[i-10: i])
+    for i in range(11, data_training_array.shape[0]):
+        x_train.append(data_training_array[i-11: i])
         y_train.append(data_training_array[i, 0])
     x_train, y_train = np.array(x_train), np.array(y_train)
     model = Sequential()
     model.add(LSTM(units = 50, activation = 'relu', return_sequences=True
               ,input_shape = (x_train.shape[1], 1)))
     model.add(Dropout(0.2))
-    model.add(LSTM(units = 60, activation = 'relu', return_sequences=True))
+    model.add(LSTM(units = 70, activation = 'relu', return_sequences=True))
     model.add(Dropout(0.3))
     model.add(LSTM(units = 80, activation = 'relu', return_sequences=False))
     model.add(Dense(units = 1))
     model.compile(optimizer = 'adam', loss = 'mean_squared_error', metrics=[tf.keras.metrics.MeanAbsoluteError()])
-    model.fit(x_train, y_train,epochs = 1)
-    past_100_days = pd.DataFrame(train_close[-10:])
+    model.fit(x_train, y_train,epochs=3)
+    past_100_days = pd.DataFrame(train_close[-11:])
     test_df = pd.DataFrame(test_close)
     final_df = past_100_days.append(test_df, ignore_index = True)
     input_data = scaler.fit_transform(final_df)
     x_test = []
     y_test = []
-    for i in range(10, input_data.shape[0]+1):
-        x_test.append(input_data[i-10: i])
+    for i in range(11, input_data.shape[0]+1):
+        x_test.append(input_data[i-11: i])
     for i in range(10, input_data.shape[0]):
         y_test.append(input_data[i, 0])
     x_test, y_test = np.array(x_test), np.array(y_test)
     y_pred = model.predict(x_test)
-    predicted=scaler.inverse_transform(y_pred)
+    predicted_y=scaler.inverse_transform(y_pred)
     y_test=y_test.reshape(-1,1)
     nor_y=scaler.inverse_transform(y_test)
-    return predicted[-1],predicted[-2]
-
+    return predicted_y[-1],predicted_y[-2]
 @app.route('/open')
 def predict_open():
     symbol=request.args.get('sys')
@@ -122,4 +124,4 @@ def predict_low():
     tom,today=predict(3,symbol)
     return jsonpify(prediction='Tomarrow Low price is {}'.format(tom),today='Today predicted low price is {}'.foramt(today))
 
-
+app.run(debug=False,host='0.0.0.0')
