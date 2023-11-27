@@ -6,5 +6,5 @@ pandas
 numpy
 tensorflow
 datetime
-
+gunicorn
 sklearn
