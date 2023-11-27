@@ -125,4 +125,4 @@ def predict_low():
     tom,today=predict(3,symbol)
     return jsonpify(prediction='Tomarrow Low price is {}'.format(tom),today='Today predicted low price is {}'.foramt(today))
 
-app.run(debug=False,host='0.0.0.0')
+
