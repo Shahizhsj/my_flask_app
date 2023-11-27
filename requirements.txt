@@ -6,6 +6,5 @@ pandas
 numpy
 tensorflow
 datetime
-Flask==2.2.2
 gunicorn==20.10.0
 sklearn
