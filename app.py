@@ -84,7 +84,7 @@ def predict(index,symbol):
     model.add(LSTM(units = 80, activation = 'relu', return_sequences=False))
     model.add(Dense(units = 1))
     model.compile(optimizer = 'adam', loss = 'mean_squared_error', metrics=[tf.keras.metrics.MeanAbsoluteError()])
-    model.fit(x_train, y_train,epochs=3)
+    model.fit(x_train, y_train,epochs=1)
     past_100_days = pd.DataFrame(train_close[-11:])
     test_df = pd.DataFrame(test_close)
     final_df = past_100_days.append(test_df, ignore_index = True)
