@@ -106,22 +106,22 @@ def predict_open():
     symbol=request.args.get('sys')
     tom,today=predict(1,symbol)
     
-    return jsonpify(prediction='Tomarrow opening price is {}'.format(tom),today='Today predicted opening price is {}'.foramt(today))
+    return jsonpify(prediction='Tomarrow opening price is {}'.format(tom),today='Today predicted opening price is {}'.format(today))
 @app.route('/close')
 def predict_close():
     symbol=request.args.get('sys')
     tom,today=predict(4,symbol)
     
-    return jsonpify(prediction='Tommarrow closing  price is {}'.format(tom),today='Today predicted closing price is {}'.foramt(today))
+    return jsonpify(prediction='Tommarrow closing  price is {}'.format(tom),today='Today predicted closing price is {}'.format(today))
 @app.route('/High')
 def predict_high():
     symbol=request.args.get('sys')
     tom,today=predict(2,symbol)
-    return jsonpify(prediction='Tomarrow High  price is {}'.format(tom),today='Today predicted Hight price is {}'.foramt(today))
+    return jsonpify(prediction='Tomarrow High  price is {}'.format(tom),today='Today predicted Hight price is {}'.format(today))
 @app.route('/low')
 def predict_low():
     symbol=request.args.get('sys')
     tom,today=predict(3,symbol)
-    return jsonpify(prediction='Tomarrow Low price is {}'.format(tom),today='Today predicted low price is {}'.foramt(today))
+    return jsonpify(prediction='Tomarrow Low price is {}'.format(tom),today='Today predicted low price is {}'.format(today))
 
 app.run(debug=False,host='0.0.0.0')
