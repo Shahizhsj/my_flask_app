@@ -68,8 +68,8 @@ def predict(index,symbol):
     data_training_array = scaler.fit_transform(train_close)
     x_train = []
     y_train = [] 
-    for i in range(100, data_training_array.shape[0]):
-        x_train.append(data_training_array[i-100: i])
+    for i in range(10, data_training_array.shape[0]):
+        x_train.append(data_training_array[i-10: i])
         y_train.append(data_training_array[i, 0])
     x_train, y_train = np.array(x_train), np.array(y_train)
     model = Sequential()
@@ -78,22 +78,19 @@ def predict(index,symbol):
     model.add(Dropout(0.2))
     model.add(LSTM(units = 60, activation = 'relu', return_sequences=True))
     model.add(Dropout(0.3))
-    model.add(LSTM(units = 80, activation = 'relu', return_sequences=True))
-    model.add(Dropout(0.4))
-    model.add(LSTM(units = 120, activation = 'relu'))
-    model.add(Dropout(0.5))
+    model.add(LSTM(units = 80, activation = 'relu', return_sequences=False))
     model.add(Dense(units = 1))
     model.compile(optimizer = 'adam', loss = 'mean_squared_error', metrics=[tf.keras.metrics.MeanAbsoluteError()])
-    model.fit(x_train, y_train,epochs = 10)
-    past_100_days = pd.DataFrame(train_close[-100:])
+    model.fit(x_train, y_train,epochs = 1)
+    past_100_days = pd.DataFrame(train_close[-10:])
     test_df = pd.DataFrame(test_close)
     final_df = past_100_days.append(test_df, ignore_index = True)
     input_data = scaler.fit_transform(final_df)
     x_test = []
     y_test = []
-    for i in range(100, input_data.shape[0]+1):
-        x_test.append(input_data[i-100: i])
-    for i in range(100, input_data.shape[0]):
+    for i in range(10, input_data.shape[0]+1):
+        x_test.append(input_data[i-10: i])
+    for i in range(10, input_data.shape[0]):
         y_test.append(input_data[i, 0])
     x_test, y_test = np.array(x_test), np.array(y_test)
     y_pred = model.predict(x_test)
